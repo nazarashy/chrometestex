@@ -1,0 +1,12 @@
+name = "link-rotator-worker"
+main = "worker.js"
+compatibility_date = "2023-07-19"
+
+[env.production]
+account_id = "your-account-id"
+route = "your-domain.workers.dev/*"
+
+[[d1_databases]]
+binding = "DB"  # Available in your Worker on env.DB
+database_name = "link-rotator-db"
+database_id = "your-database-id"
