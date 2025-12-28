@@ -1,39 +1,46 @@
 ```
-# Dependencies
-node_modules/
-
-# Editor/IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*.tmp
-
-# Logs
+# Logs and temp files
 *.log
+*.tmp
+*.swp
 
-# Environment files
+# Environment
 .env
 .env.local
 *.env.*
 
-# Build artifacts
-dist/
-build/
-target/
+# Editors
+.vscode/
+.idea/
 
-# Python
+# Dependencies
+node_modules/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Build artifacts
+dist/
+build/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.out
+
+# System files
+.DS_Store
+Thumbs.db
 
 # Coverage
 coverage/
 htmlcov/
 .coverage
 
-# Compression files
+# Compressed files
 *.zip
 *.gz
 *.tar

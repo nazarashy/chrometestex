@@ -31,8 +31,7 @@ let cyclesCompleted = 0;
 let remainingTime = 0;
 let waitingForAd = false;
 
-// Cloudflare Worker endpoint (replace with your actual worker URL)
-const WORKER_ENDPOINT = 'https://your-worker.your-account.workers.dev/api/stats';
+
 
 // Initialize extension state
 chrome.runtime.onInstalled.addListener(() => {
@@ -80,16 +79,12 @@ async function startRotation() {
   cyclesCompleted = 0;
   remainingTime = countdownTime;
   
-  // Create hidden window
+  // Create hidden window (always minimized)
   try {
     hiddenWindow = await chrome.windows.create({
       url: URL_LIST[currentUrlIndex],
       type: 'popup',
-      width: 1,
-      height: 1,
-      left: -1000,
-      top: -1000,
-      focused: false
+      state: 'minimized'
     });
     
     // Get the tab from the hidden window
@@ -290,46 +285,18 @@ function updateBadge() {
   }
 }
 
-// Send stats to Cloudflare Worker
-async function sendStats() {
-  if (!startTime) return;
-  
+// Store stats locally (no Cloudflare Worker)
+function sendStats() {
+  // Only update local storage with current stats
   const stats = {
-    ip: await getIP(),
-    uptime: Math.floor((Date.now() - startTime) / 1000),
+    uptime: startTime ? Math.floor((Date.now() - startTime) / 1000) : 0,
     adsWatched,
     cyclesCompleted,
     timestamp: new Date().toISOString()
   };
   
-  try {
-    await fetch(WORKER_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(stats)
-    });
-  } catch (error) {
-    console.error('Error sending stats to worker:', error);
-  }
+  chrome.storage.sync.set({ stats });
 }
 
-// Get user's IP address
-async function getIP() {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
-  } catch (error) {
-    console.error('Error getting IP address:', error);
-    return 'unknown';
-  }
-}
 
-// Periodically send stats (every 30 seconds)
-setInterval(() => {
-  if (isRotating) {
-    sendStats();
-  }
-}, 30000);
+
